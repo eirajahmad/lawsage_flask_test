@@ -28,7 +28,7 @@ Visit http://localhost:8000/
 
 ```bash
 # Get all users
-curl -s http://localhost:5000/users | python -m json.tool
+curl -s http://localhost:8000/users | python -m json.tool
 
 # Search (name or email, partial/ci)
 curl -s "http://localhost:5000/search?name=ada" | python -m json.tool
