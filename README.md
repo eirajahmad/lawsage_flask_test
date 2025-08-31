@@ -31,7 +31,7 @@ Visit http://localhost:8000/
 curl -s http://localhost:8000/users | python -m json.tool
 
 # Search (name or email, partial/ci)
-curl -s "http://localhost:5000/search?name=ada" | python -m json.tool
+curl -s "http://localhost:8000/search?name=ada" | python -m json.tool
 ```
 
 ## Notes
