@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LawSage Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <style>
+    /* Floating animation for hero background circles */
+    .float {
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- HERO SECTION -->
+  <section class="pt-20 text-center bg-gradient-to-r from-indigo-500 to-purple-600 text-white min-h-screen flex flex-col justify-center relative overflow-hidden">
+    <!-- Floating circles -->
+    <div class="absolute top-10 left-10 w-24 h-24 bg-white/10 rounded-full blur-2xl float"></div>
+    <div class="absolute bottom-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-3xl float" style="animation-delay: 3s;"></div>
+
+    <h1 class="text-5xl font-extrabold mb-4" data-aos="fade-up">
+      Welcome to LawSage Test
+    </h1>
+    <p class="text-xl mb-6" data-aos="fade-up" data-aos-delay="150">
+      Beautiful UI with Live Search & User Listing
+    </p>
+    
+    <!-- SEARCH BAR -->
+    <div class="flex justify-center mb-6" data-aos="fade-up" data-aos-delay="300">
+      <input id="searchInput" type="text" placeholder="Search users by name"
+        class="w-64 px-4 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700">
+      <button onclick="searchUsers()"
+        class="bg-white text-indigo-700 px-6 py-2 rounded-r-lg hover:bg-gray-100 transition">
+        Search
+      </button>
+    </div>
+
+    <!-- SEARCH RESULTS -->
+    <div id="results" class="w-full max-w-md mx-auto bg-white text-gray-700 shadow-md rounded-lg p-4 hidden"></div>
+
+    <!-- VIEW ALL USERS BUTTON -->
+    <div class="flex justify-center mt-4" data-aos="fade-up" data-aos-delay="400">
+      <button onclick="scrollToUsers()"
+        class="bg-white text-indigo-700 px-6 py-2 rounded-lg hover:bg-gray-100 transition">
+        View All Users
+      </button>
+    </div>
+  </section>
+
+  <!-- ALL USERS SECTION -->
+  <section id="allUsersSection" class="py-20 relative bg-gradient-to-br from-gray-50 via-indigo-50 to-purple-50">
+    <!-- Decorative background pattern -->
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+
+    <div class="relative max-w-4xl mx-auto text-center mb-10" data-aos="fade-up">
+      <h2 class="text-4xl font-extrabold text-indigo-700 drop-shadow">
+        All Users
+      </h2>
+      <p class="text-gray-600 mt-3 text-lg">
+        Browse the list of all registered users in style.
+      </p>
+    </div>
+
+    <!-- User Cards -->
+    <div id="usersList" 
+         class="relative max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+    </div>
+  </section>
+
+  <script>
+    AOS.init();
+
+    // Fetch all users when page loads
+    window.onload = async function() {
+      let res = await fetch('/users');
+      let users = await res.json();
+      displayUsers(users);
+    };
+
+    // Show all users in list
+    function displayUsers(users) {
+      let container = document.getElementById("usersList");
+      container.innerHTML = '';
+      users.forEach((u, index) => {
+        container.innerHTML += `
+          <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl hover:-translate-y-1 transform transition duration-300"
+               data-aos="fade-up" data-aos-delay="${index * 100}">
+            <p class="text-xl font-semibold text-indigo-700">${u.name}</p>
+            <p class="text-gray-600">${u.email}</p>
+          </div>`;
+      });
+    }
+
+    // Search function
+    async function searchUsers() {
+      let name = document.getElementById("searchInput").value;
+      let res = await fetch(`/search?name=${encodeURIComponent(name)}`);
+      let data = await res.json();
+
+      let resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = '';
+
+      if (data.length === 0) {
+        resultsDiv.innerHTML = '<p class="text-gray-500">No users found.</p>';
+      } else {
+        data.forEach(u => {
+          resultsDiv.innerHTML += `
+            <div class="border-b py-2">
+              <p class="font-semibold">${u.name}</p>
+              <p class="text-sm text-gray-600">${u.email}</p>
+            </div>`;
+        });
+      }
+
+      resultsDiv.classList.remove('hidden');
+    }
+
+    // Scroll to All Users
+    function scrollToUsers() {
+      document.querySelector("#allUsersSection").scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+  </script>
+
+</body>
+</html>
